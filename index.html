@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/SLASH</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+    <header>
+        <nav>
+            <a href="/">CPS TEST</a>
+        </nav>
+        <div class="status">
+            <span></span>
+            SYSTEM ONLINE
+        </div>
+    </header>
+    <main>
+        <section class="first">
+            <p class="eyebrow"></p>
+            <h1>TEST YOUR SKILLS</h1>
+            <p>TEST YOUR CLICKING SPEED</p>
+        </section>
+
+        <section class="second">
+            <div class="heading">
+                <div>
+                    <span>
+
+                    </span>
+                </div>
+
+                <div class="duration-select">
+                    <span>TEST DURATION</span>
+                    <div class="durations">
+                        <button class="duration active" data-time="1">1 SEC</button>
+
+                        <button class="duration" data-time="5">5 SEC</button>
+
+                        <button class="duration" data-time="10">10 SEC</button>
+
+                        <button class="duration" datatime="30">30 SEC</button>
+
+                    </div>
+                </div>
+
+                <div class="cps-stats">
+                    <div>
+                        <span>your cps</span>
+                        <strong id="cpsValue">0.00</strong>
+                    </div>
+                    <div>
+                        <span>time left</span>
+                        <strong id="timeLeft">5.0s</strong>
+                    </div>
+                    <div>
+                        <span>total clicks</span>
+                        <strong id="clickCount">0</strong>
+                    </div>
+                </div>
+
+                <button id="clickArea" class="click-area">
+                    <span class="click-icon">+</span>
+                    <strong id="clickText">CLICK TO START</strong>
+                    <small>CLICK AS FAST AS YOU CAN !!!</small>
+                </button>
+
+                <div class="result">
+                    <span>BEST CPS THIS SESSION</span>
+                    <strong id="bestCPS">0.00</strong>
+                </div>
+
+                <button id="resetBtn" class="reset-btn">RESER TEST</button>
+        </section>
+
+        <footer>
+
+        </footer>
+    </main>
+</body>
+</html>
