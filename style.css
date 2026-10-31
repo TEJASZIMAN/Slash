@@ -186,3 +186,14 @@ reset-btn:hover{
     color: white;
     border-color: var(--red);
 }
+
+.logo{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgb(255, 255, 255);
+    color: rgb(16, 16, 16);
+    text-align: center;
+    padding-top: 7px;
+    font-size: 20px;
+}
