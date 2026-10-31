@@ -7,14 +7,16 @@ const bestCPS = document.getElementById("bestCPS");
 const resetBtn = document.getElementById("resetBtn");
 
 let duration = 10;
-// duration of the game
 let clicks = 0;
 let startTime = 0;
 let endTime = 0;
 let timerInterval = null;
+let starting = false;
 let running = false;
 let finished = false;
 let beat = 0;
+let countdownInterval = null;
+let countdownTimeout = null;
 
 const durationButtons = document.querySelectorAll(".duration");
 
@@ -33,6 +35,9 @@ durationButtons.forEach(button => {
 
 function resetCPS() {
     clearInterval(timerInterval);
+    clearInterval(countdownInterval);
+    clearTimeout(countdownTimeout);
+    starting = false;
 
     clicks = 0;
     running = false;
@@ -46,9 +51,34 @@ function resetCPS() {
 }
 
 function startCPS() {
+    starting = true;
+
+    let count = 3;
+    clickText.textContent = count;
+
+    countdownInterval = setInterval(() => {
+        count--;
+
+        if (count > 0) {
+            clickText.textContent = count;
+        } else {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+
+            clickText.textContent = "GO!";
+
+            countdownTimeout = setTimeout(() => {
+                starting = false;
+                beginTest();
+            }, 500);
+        }
+    }, 1000);
+}
+
+function beginTest() {
     running = true;
-    finished = false; 
-    clicks = 1;
+    finished = false;
+    clicks = 0;
 
     startTime = performance.now();
     endTime = startTime + duration * 1000;
@@ -71,7 +101,7 @@ function updateTimer() {
     cpsValue.textContent = currentCPS.toFixed(2);
 
     if (remaining <= 0) {
-        finishedCPS();
+        finishCPS();
     }
 }
 
@@ -84,14 +114,17 @@ function finishCPS() {
     const finalCPS = clicks / duration;
     cpsValue.textContent = finalCPS.toFixed(2);
     timeLeft.textContent = "0.0s";
+    clickText.textContent = "TEST ENDED!";
 
     if (finalCPS > beat) {
-        best = finalCPS;
-        bestCPS.textContent = best.toFixed(2);
+        beat = finalCPS;
+        bestCPS.textContent = beat.toFixed(2);
     }
+}
 
-    clickArea.addEventListener("click",() => {
-        if (finished) return;
+resetBtn.addEventListener("click", resetCPS);
+ clickArea.addEventListener("click",() => {
+        if (finished || starting) return;
 
         if (!running) {
             startCPS();
@@ -99,12 +132,10 @@ function finishCPS() {
         }
 
         clicks++;
-        clickCount.tectContext = clicks;
+        clickCount.textContent = clicks;
 
         const elsapsed = Math.max(1, performance.now() - startTime);
-        cpsValue.textContext = (clicks / (elapsed / 1000)).toFixed(2);
+        cpsValue.textContent = (clicks / (elsapsed / 1000)).toFixed(2);
+        
     });
-    resetBtn.addEventListener("click", resetCPS);
-
-    resetCPS();
-}
+      resetCPS();
