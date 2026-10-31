@@ -17,6 +17,8 @@ let finished = false;
 let beat = 0;
 let countdownInterval = null;
 let countdownTimeout = null;
+let cpsHistory = []
+let lastGraphUpdate = 0;
 
 const durationButtons = document.querySelectorAll(".duration");
 
@@ -80,6 +82,11 @@ function beginTest() {
     finished = false;
     clicks = 0;
 
+    cpsHistory = [];
+    lastGraphUpdate = 0;
+    drawCPSGraph();
+
+
     startTime = performance.now();
     endTime = startTime + duration * 1000;
 
@@ -99,6 +106,15 @@ function updateTimer() {
 
     const currentCPS = clicks / (elapsed / 1000);
     cpsValue.textContent = currentCPS.toFixed(2);
+    if (now - lastGraphUpdate >= 100 || remaining <= 0) {
+    cpsHistory.push({
+        time: elapsed / 1000,
+        cps: currentCPS
+    });
+
+    lastGraphUpdate = now;
+    drawCPSGraph();
+}
 
     if (remaining <= 0) {
         finishCPS();
@@ -138,4 +154,66 @@ resetBtn.addEventListener("click", resetCPS);
         cpsValue.textContent = (clicks / (elsapsed / 1000)).toFixed(2);
         
     });
+    function drawCPSGraph() {
+    const canvas = document.getElementById("cpsGraph");
+    const ctx = canvas.getContext("2d");
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    if (!width || !height) return;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    ctx.clearRect(0, 0, width, height);
+
+    const padding = 25;
+    const graphWidth = width - padding * 2;
+    const graphHeight = height - padding * 2;
+
+    const maxCPS = Math.max(
+        10,
+        ...cpsHistory.map(point => point.cps)
+    ) * 1.2;
+
+    // Draw horizontal grid lines
+    ctx.strokeStyle = "#303030";
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= 4; i++) {
+        const y = padding + (graphHeight / 4) * i;
+
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+    }
+    if (cpsHistory.length === 0) return;
+
+    ctx.beginPath();
+
+    cpsHistory.forEach((point, index) => {
+        const x = padding +
+            (point.time / duration) * graphWidth;
+
+        const y = height - padding -
+            (point.cps / maxCPS) * graphHeight;
+
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    });
+
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.stroke();
+}
       resetCPS();
